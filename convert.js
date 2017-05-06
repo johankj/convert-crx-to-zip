@@ -78,16 +78,16 @@ function handleFiles(files) {
     if (buf[4] !== 2 || buf[5] !== 0 || buf[6] !== 0 || buf[7] !== 0) {
         throw new Error("Unexpected crx format version number.");
     }
-    
+
     var publicKeyLength = 0 + buf[8] + (buf[9] << 8) + (buf[10] << 16) + (buf[11] << 24);
-    var signatureLength = 0 + buf[12] + (buf[13] << 8) + (buf[13] << 16) + (buf[15] << 24);
-    
+    var signatureLength = 0 + buf[12] + (buf[13] << 8) + (buf[14] << 16) + (buf[15] << 24);
+
     // 16 = Magic number (4), CRX format version (4), lengths (2x4)
     var header = 16;
     var zipStartOffset = header + publicKeyLength + signatureLength;
-    
+
     var zip = buf.slice(zipStartOffset, buf.length);
-    
+
     downloadFile(file.name.replace(".crx", ".zip"), [zip]);
   }
   reader.readAsArrayBuffer(file);
@@ -95,7 +95,7 @@ function handleFiles(files) {
 
 function downloadFile(filename, data) {
   var a = document.createElement('a');
-  a.style = "display: none";  
+  a.style = "display: none";
   var blob = new Blob(data, {type: "application/octet-stream"});
   var url = window.URL.createObjectURL(blob);
   a.href = url;
@@ -104,6 +104,6 @@ function downloadFile(filename, data) {
   a.click();
   setTimeout(function() {
     document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);  
+    window.URL.revokeObjectURL(url);
   }, 0);
 }
